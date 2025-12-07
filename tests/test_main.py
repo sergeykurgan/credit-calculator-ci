@@ -1,7 +1,16 @@
 # tests/test_main.py
+
+import os
+import sys
 import types
 import pytest
-import main
+
+# добавляем корень проекта в sys.path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+import main  # noqa: E402
 
 
 class DummyVar:
@@ -79,6 +88,7 @@ def test_calculate_loan_success(monkeypatch):
 
     main.CurrencyConverterApp.calculate_loan(app)
 
+    # ожидаемый платёж ≈ 8884.88 RUB
     assert app.last_monthly_payment == pytest.approx(8884.88, rel=1e-3)
 
     assert "Ежемесячный платёж" in app.monthly_label.text
@@ -96,10 +106,12 @@ def test_calculate_loan_invalid_loan_amount(monkeypatch):
     app.loan_time_var.set(12)
     app.annual_interest_var.set(12.0)
 
+    # заставляем проверку вернуть True
     app.is_loan_invalid = lambda value, message: True
 
     main.CurrencyConverterApp.calculate_loan(app)
 
+    # платёж не должен быть рассчитан
     assert app.last_monthly_payment == 0.0
 
 
@@ -112,6 +124,7 @@ def test_convert_success(monkeypatch):
     app.target_var.set("USD")
     app.base_var.set("RUB")
 
+    # курс: 1 USD = 100 RUB
     monkeypatch.setattr(main, "get_saved_rate", lambda currency: 100.0)
 
     main.CurrencyConverterApp.convert(app)
