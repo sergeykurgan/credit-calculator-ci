@@ -1,8 +1,17 @@
 # tests/test_db.py
+
+import os
+import sys
 import sqlite3
 import re
 import pytest
-import db
+
+# добавляем корень проекта в sys.path, чтобы работали import db / api / main
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+import db  # noqa: E402
 
 
 @pytest.fixture
