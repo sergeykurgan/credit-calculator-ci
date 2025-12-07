@@ -1,7 +1,16 @@
 # tests/test_api.py
+
+import os
+import sys
 import pytest
 import requests
-import api
+
+# добавляем корень проекта в sys.path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+import api  # noqa: E402
 
 
 class DummyResponse:
